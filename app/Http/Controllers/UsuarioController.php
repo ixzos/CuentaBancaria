@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Usuario;
+use App\Models\Cuenta;
+use Illuminate\Support\Facades\DB;
 
 class UsuarioController extends Controller
 {
@@ -53,10 +55,17 @@ class UsuarioController extends Controller
      */
     public function show($cedula)
     {
-        //
-        /*$usuarioReturn = Usuario::where('cedula',$cedula)->get('nombre','apellido');*/
-        $usuarioReturn = Usuario::where('cedula', $cedula)->get();
-        
+        //        
+        $usuarioReturn = DB::table('usuarios')
+                                ->join('cuentas','usuarios.id', '=', 'cuentas.idUsuario' )
+                                ->select('usuarios.*','cuentas.saldo')
+                                ->where('usuarios.cedula', $cedula)
+                                ->get();
+
+        if(count($usuarioReturn) <= 0)
+        {
+            return response()->json(['message'=> 'Usuario no registrado'], 404);
+        }
         return $usuarioReturn;
     }
 
@@ -75,14 +84,39 @@ class UsuarioController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  int  $cedula
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $cedula)
     {
+         
         //
-    }
+        $saldo = 0;
+        $id =0;
+        $usuarioReturn = DB::table('usuarios')
+                                ->join('cuentas','usuarios.id', '=', 'cuentas.idUsuario' )
+                                ->select('usuarios.*','cuentas.saldo')
+                                ->where('usuarios.cedula', $cedula)
+                                ->get();
+        if(count($usuarioReturn) <= 0)
+        {
+            return response()->json(['message'=> 'Usuario no registrado'], 404);
+        }
 
+        foreach($usuarioReturn as $valores)
+        {
+        $saldo = ($valores->saldo);
+        $id = ($valores->id);
+        };                        
+        
+        $saldoSuma = $saldo + $request->saldoAdd;
+
+        $usuarioAddMoney = Cuenta::where('idUsuario', $id)
+                                   ->update(['saldo' => $saldoSuma]);
+                              
+        return response()->json(['message'=> 'Saldo actualizado'], 200); 
+    }
+    
     /**
      * Remove the specified resource from storage.
      *

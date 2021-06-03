@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cuenta extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['idUsuario','numeroCuenta','saldo'];
+    public $timestamps = false;
 }
