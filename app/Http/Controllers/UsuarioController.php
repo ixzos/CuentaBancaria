@@ -39,12 +39,24 @@ class UsuarioController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $usuarioReturn = DB::table('usuarios')
+                                ->join('cuentas','usuarios.id', '=', 'cuentas.idUsuario' )
+                                ->select('usuarios.*','cuentas.saldo')
+                                ->where('usuarios.cedula', $request->cedula)
+                                ->get();
+
+        if(count($usuarioReturn) > 0)
+        {
+            return response()->json(['message'=> 'Usuario ya se encuentra registrado'], 201);
+        }            
+
         $usuario = new Usuario;
         $usuario -> nombre = $request -> input('nombre');
         $usuario -> apellido = $request -> input('apellido');
         $usuario -> cedula = $request -> input('cedula');       
         $usuario -> save();
+
+        return response()->json(['message'=> 'Usuario registrado satisfactoriamente'], 201);
     }
 
     /**
