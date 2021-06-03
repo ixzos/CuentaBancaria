@@ -39,11 +39,11 @@ class UsuarioController extends Controller
      */
     public function store(Request $request)
     {
-        $usuarioReturn = DB::table('usuarios')
-                                ->join('cuentas','usuarios.id', '=', 'cuentas.idUsuario' )
-                                ->select('usuarios.*','cuentas.saldo')
+        $usuarioReturn = DB::table('usuarios')                                
+                                ->select('usuarios.*')
                                 ->where('usuarios.cedula', $request->cedula)
                                 ->get();
+
 
         if(count($usuarioReturn) > 0)
         {
@@ -76,7 +76,7 @@ class UsuarioController extends Controller
 
         if(count($usuarioReturn) <= 0)
         {
-            return response()->json(['message'=> 'Usuario no registrado'], 404);
+            return response()->json(['message'=> 'Usuario no registr cuenta bancaria'], 404);
         }
         return $usuarioReturn;
     }
@@ -100,19 +100,21 @@ class UsuarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $cedula)
-    {
-         
+    {        
+
         //
         $saldo = 0;
         $id =0;
-        $usuarioReturn = DB::table('usuarios')
-                                ->join('cuentas','usuarios.id', '=', 'cuentas.idUsuario' )
-                                ->select('usuarios.*','cuentas.saldo')
-                                ->where('usuarios.cedula', $cedula)
-                                ->get();
+        $usuarioReturn = DB::table('usuarios')                                
+                            ->join('cuentas','usuarios.id', '=', 'cuentas.idUsuario' )
+                            ->select('usuarios.*','cuentas.saldo')
+                            ->where('usuarios.cedula', $cedula)
+                            ->get();
+
+                                     
         if(count($usuarioReturn) <= 0)
         {
-            return response()->json(['message'=> 'Usuario no registrado'], 404);
+            return response()->json(['message'=> 'Usuario sin cuenta, cree una cuenta para recargar saldo'], 404);
         }
 
         foreach($usuarioReturn as $valores)

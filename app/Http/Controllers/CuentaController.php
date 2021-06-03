@@ -82,7 +82,7 @@ class CuentaController extends Controller
                             ->join('cuentas','usuarios.id', '=', 'cuentas.idUsuario' )
                             ->select('usuarios.*','cuentas.saldo')
                             ->where('usuarios.cedula', $request->cedulaRecibe)
-                            ->get();                    
+                            ->get();                   
 
     if(count($usuarioSend) <= 0)
     {

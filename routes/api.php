@@ -21,7 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::resource('/usuarios','App\Http\Controllers\UsuarioController');
 Route::resource('/cuentas','App\Http\Controllers\CuentaController');
-Route::put('/usuarios/transact/', 'App\Http\Controllers\UsuarioController@transaccion');
+
 Route::put('usuarios/{cedula}', 'App\Http\Controllers\UsuarioController@update');
 Route::put('cuentas/{cedulaEnvio}', 'App\Http\Controllers\CuentaController@update');
 
